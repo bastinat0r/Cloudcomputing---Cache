@@ -80,6 +80,7 @@ srv.listen(port);
 function enqueJob(job) {
 	for(var i in workers) {
 		if(workers[i].idle) {
+			workers[i].idle = false;
 			startJob(workers[i], job);
 			return;
 		}

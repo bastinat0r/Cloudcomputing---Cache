@@ -19,6 +19,27 @@ function register() {
 		res.on('end', function() {
 			workerID = JSON.parse(data);
 			util.puts("Got workerID: " + workerID);
+			config.sheduler.path = '/worker';
+			var req = http.request(config.sheduler, function(res) {
+				var data = "";
+				res.on('data', function(chunk) {
+					data = data + chunk;
+				});
+				res.on('end', function() {
+					if(res.statusCode == 200) {
+						computeEvenNumber(JSON.parse(data));
+					}
+					else {
+						idle = true;
+					}
+				});
+			});
+			var answer = {
+				id : workerID,
+				idle : true
+			}
+			util.puts(JSON.stringify(answer));
+			req.end(JSON.stringify(answer));
 		});
 	});
 	req.end(JSON.stringify({

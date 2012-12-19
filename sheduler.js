@@ -12,6 +12,17 @@ var idCount = 0;
 
 var queue = [];
 var negativeCaching = false;
+var prefill = true;
+
+if(prefill) {
+	for(var i = 0; i<15; i++) {
+		enqueJob({
+			param : i,
+			id : i
+		});
+	};
+	idCount = i+1;
+}
 
 var srv = http.createServer(function(req, res) {
 	var data = "";

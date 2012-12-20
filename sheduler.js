@@ -49,7 +49,7 @@ var srv = http.createServer(function(req, res) {
 				} else {
 					workers[worker.id].idle = false;
 					res.writeHead(200);
-					res.end(JSON.stringify(queue.pop()));
+					res.end(JSON.stringify(queue.shift()));
 				}
 			}
 		}

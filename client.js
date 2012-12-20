@@ -2,7 +2,7 @@ var http = require('http');
 var util = require('util');
 
 
-var local = true;
+var local = false;
 var reqUrl = "http://localhost:3000/client?time=";
 
 if(!local)

@@ -11,7 +11,7 @@ if(!local)
 	reqUrl = "http://bastinat0r.de:3000/client?time=";
 
 for(var i = 0; i < 8; i++) {
-	doRequest(8 * i);
+	doRequest(4 * i);
 }
 var sum = 0;
 var num = 0;

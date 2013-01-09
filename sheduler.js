@@ -125,7 +125,6 @@ function execCB(err, stdout, stderr) {
 		}
 		util.puts(stdout);
 		util.puts(stderr);
-	});
 }
 
 function startWorker() {

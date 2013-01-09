@@ -44,6 +44,7 @@ function register() {
 	});
 	req.end(JSON.stringify({
 		opts : config.opts,
+		vmname : config.vmname,
 		idle : true
 	}));
 }

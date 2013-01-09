@@ -18,6 +18,8 @@ var cacheing = false;
 var negativeCaching = false;
 var prefill = false;
 
+var stopNextWorker = false;
+
 if(prefill) {
 	for(var i = 0; i<15; i++) {
 		enqueJob({
@@ -41,19 +43,24 @@ var srv = http.createServer(function(req, res) {
 				util.puts(data);
 				var worker = JSON.parse(data);
 				if(worker.result) {
-					resultEmitter.emit('result'+worker.result.id, worker.result);
+					resultEmitter.emiit('result'+worker.result.id, worker.result);
 					if(cacheing && (worker.result.num >= 0 || negativeCaching)) {
 						cache[worker.result.param] = worker.result.num;
 					}
 				}
-				if(queue.length == 0) {
-					workers[worker.id].idle = true;
-					res.writeHead(404);
-					res.end();
-				} else {
+				if(stopNextWorker && workers[worker.id].vmname) {
 					workers[worker.id].idle = false;
-					res.writeHead(200);
-					res.end(JSON.stringify(queue.shift()));
+					stopWorker(worker[worker.id].vmname);
+				} else {
+					if(queue.length == 0) {
+						workers[worker.id].idle = true;
+						res.writeHead(404);
+						res.end();
+					} else {
+						workers[worker.id].idle = false;
+						res.writeHead(200);
+						res.end(JSON.stringify(queue.shift()));
+					}
 				}
 			}
 		}
@@ -108,8 +115,12 @@ function enqueJob(job) {
 		}
 	}
 	queue.push(job);
-	if(queue.length > 10 && azure_vm_names.length > 0) {
+	if(queue.length > 5 && azure_vm_names.length > 0) {
+		stopNextWorker = false;
 		startWorker(azure_vm_names.pop());
+	}
+	if(queue.length <3) {
+		stopNextWorker = true;
 	}
 };
 
@@ -133,5 +144,6 @@ function startWorker(vmname) {
 }
 
 function stopWorker(vmname) {
-	var child = exec("azure vm stop " + vmname, execCB);
+	var stopNextWorker = false;
+	var child = exec("azure vm shutdown " + vmname, execCB);
 }

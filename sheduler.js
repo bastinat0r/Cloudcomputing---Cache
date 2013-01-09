@@ -108,8 +108,8 @@ function enqueJob(job) {
 		}
 	}
 	queue.push(job);
-	if(queue.length > 10) {
-		startWorker(azure_vm_names[0]);
+	if(queue.length > 10 && azure_vm_names.length > 0) {
+		startWorker(azure_vm_names.pop());
 	}
 };
 

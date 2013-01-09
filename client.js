@@ -8,11 +8,12 @@ var reqUrl = "http://localhost:3000/client?time=";
 if(!local)
 	reqUrl = "http://bastinat0r.de:3000/client?time=";
 
-doRequest(20);
-doRequest(20);
-
+for(var i = 0; i < 12; i++) {
+	doRequest(3);
+}
 var sum = 0;
 var num = 0;
+
 function doRequest(n) {
 	var startTime = new Date();
 	var req = http.get(reqUrl + Math.floor(Math.random() * 10 + 5), function(res) {

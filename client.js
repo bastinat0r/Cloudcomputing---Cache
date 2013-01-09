@@ -10,8 +10,8 @@ http.globalAgent.maxSockets = 30;
 if(!local)
 	reqUrl = "http://bastinat0r.de:3000/client?time=";
 
-for(var i = 0; i < 12; i++) {
-	doRequest(3);
+for(var i = 0; i < 6; i++) {
+	doRequest(10*i);
 }
 var sum = 0;
 var num = 0;

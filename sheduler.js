@@ -43,7 +43,7 @@ var srv = http.createServer(function(req, res) {
 				util.puts(data);
 				var worker = JSON.parse(data);
 				if(worker.result) {
-					resultEmitter.emiit('result'+worker.result.id, worker.result);
+					resultEmitter.emit('result'+worker.result.id, worker.result);
 					if(cacheing && (worker.result.num >= 0 || negativeCaching)) {
 						cache[worker.result.param] = worker.result.num;
 					}
@@ -145,5 +145,6 @@ function startWorker(vmname) {
 
 function stopWorker(vmname) {
 	var stopNextWorker = false;
+	azure_vm_names.push(vmname);
 	var child = exec("azure vm shutdown " + vmname, execCB);
 }

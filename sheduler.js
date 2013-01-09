@@ -128,6 +128,7 @@ function execCB(err, stdout, stderr) {
 }
 
 function startWorker(vmname) {
+	util.puts("Starting Worker: " + vmname);
 	var child = exec("azure vm start " + vmname, execCB);
 }
 

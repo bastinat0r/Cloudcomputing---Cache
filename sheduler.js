@@ -127,10 +127,10 @@ function execCB(err, stdout, stderr) {
 		util.puts(stderr);
 }
 
-function startWorker() {
+function startWorker(vmname) {
 	var child = exec("azure vm start " + vmname, execCB);
 }
 
-function stopWorker() {
+function stopWorker(vmname) {
 	var child = exec("azure vm stop " + vmname, execCB);
 }

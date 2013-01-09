@@ -5,6 +5,8 @@ var util = require('util');
 var local = false;
 var reqUrl = "http://localhost:3000/client?time=";
 
+http.globalAgent.maxSockets = 30;
+
 if(!local)
 	reqUrl = "http://bastinat0r.de:3000/client?time=";
 

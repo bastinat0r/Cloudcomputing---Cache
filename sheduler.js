@@ -12,13 +12,17 @@ var workers = [];
 var idCount = 0;
 
 var queue = [];
+var load = 0;
+var stopNextWorker = false;
+
 var azure_vm_names = ['foobar'];
+var autoscale_method = 'load'; /* can be set to load, or queue, or something else */
+var debug = false;
 
 var cacheing = false;
 var negativeCaching = false;
 var prefill = false;
 
-var stopNextWorker = false;
 
 if(prefill) {
 	for(var i = 0; i<15; i++) {
@@ -36,11 +40,12 @@ var srv = http.createServer(function(req, res) {
 		data = data + chunk;
 	});
 	req.on('end', function() {
-		util.puts(data);
-		util.puts(req.url);
+		if(debug) {
+			util.puts(data);
+			util.puts(req.url);
+		}
 		if(/^\/worker/.test(req.url)) {
 			if(req.method == 'POST') {
-				util.puts(data);
 				var worker = JSON.parse(data);
 				if(worker.result) {
 					resultEmitter.emit('result'+worker.result.id, worker.result);
@@ -50,6 +55,7 @@ var srv = http.createServer(function(req, res) {
 				}
 				if(stopNextWorker && workers[worker.id].vmname) {
 					workers[worker.id].idle = false;
+					workers[worker.id].terminated = true;
 					stopWorker(workers[worker.id].vmname);
 				} else {
 					if(queue.length == 0) {
@@ -73,8 +79,40 @@ var srv = http.createServer(function(req, res) {
 		
 		if(/^\/load/.test(req.url)) {
 			worker = JSON.parse(data);
+			workers[worker.id].load = worker.load;
+			var sum = 0;
+			var num = 0;
+			for(var i in workers) {
+				if(!workers[i].terminated) {
+					if(workers[i].load) {
+						sum += workers[i].load;
+						num++;
+					}
+				}
+			}
+			if(num == 0) {
+				load = 0;
+			} else {
+				load = sum / num;
+			}
+			util.puts(sum);
+			util.puts('===');
+			util.puts(num);
+			util.puts("load :\t" + worker.load);
+			util.puts("avg  :\t" + load);
+
+			if(autoscale_method == 'load') {
+				if(load > 60 && azure_vm_names.length > 0) {
+					stopNextWorker = false;
+					startWorker(azure_vm_names.pop());
+				}
+				if(load < 20) { 
+					stopNextWorker = true;
+				}
+			}
+
 			res.writeHead(200);
-			res.end(JSON.stringify(workers.length - 1));
+			res.end(JSON.stringify(load));
 		}
 		
 		if(/^\/client/.test(req.url)) {
@@ -93,7 +131,6 @@ var srv = http.createServer(function(req, res) {
 				res.writeHead(200);
 				res.end(JSON.stringify(answer));
 			} else {
-				util.puts(JSON.stringify(job));
 				idCount++;
 				enqueJob(job);
 				res.writeHead(200);
@@ -115,12 +152,14 @@ function enqueJob(job) {
 		}
 	}
 	queue.push(job);
-	if(queue.length > 5 && azure_vm_names.length > 0) {
-		stopNextWorker = false;
-		startWorker(azure_vm_names.pop());
-	}
-	if(queue.length <3) {
-		stopNextWorker = true;
+	if(autoscale_method == 'queue') {
+		if(queue.length > 5 && azure_vm_names.length > 0) {
+			stopNextWorker = false;
+			startWorker(azure_vm_names.pop());
+		}
+		if(queue.length <3) {
+			stopNextWorker = true;
+		}
 	}
 };
 

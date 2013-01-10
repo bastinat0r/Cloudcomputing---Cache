@@ -48,6 +48,8 @@ var srv = http.createServer(function(req, res) {
 			if(req.method == 'POST') {
 				var worker = JSON.parse(data);
 				if(worker.result) {
+					util.puts("Worker submitted result: "+ worker.id);
+					util.puts(JSON.stringify(worker.result));
 					resultEmitter.emit('result'+worker.result.id, worker.result);
 					if(cacheing && (worker.result.num >= 0 || negativeCaching)) {
 						cache[worker.result.param] = worker.result.num;
@@ -95,10 +97,7 @@ var srv = http.createServer(function(req, res) {
 			} else {
 				load = sum / num;
 			}
-			util.puts(sum);
-			util.puts('===');
-			util.puts(num);
-			util.puts("load :\t" + worker.load);
+			util.puts("load " + worker.id + " :\t" + worker.load);
 			util.puts("avg  :\t" + load);
 
 			if(autoscale_method == 'load') {

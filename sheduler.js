@@ -106,7 +106,7 @@ var srv = http.createServer(function(req, res) {
 					stopNextWorker = false;
 					startWorker(azure_vm_names.pop());
 				}
-				if(load < 20) { 
+				if(load < 45) { 
 					stopNextWorker = true;
 				}
 			}

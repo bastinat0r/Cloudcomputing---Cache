@@ -75,7 +75,7 @@ var srv = http.createServer(function(req, res) {
 		if(/^\/register/.test(req.url)) {
 			worker = JSON.parse(data);
 			workers.push(worker);
-			util.puts("worker registered: workers.length - 1");
+			util.puts("worker registered: " + (workers.length - 1));
 			res.writeHead(200);
 			res.end(JSON.stringify(workers.length - 1));
 		}

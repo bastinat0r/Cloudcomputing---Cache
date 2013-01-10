@@ -58,6 +58,7 @@ var srv = http.createServer(function(req, res) {
 				if(stopNextWorker && workers[worker.id].vmname) {
 					workers[worker.id].idle = false;
 					workers[worker.id].terminated = true;
+					util.puts("stoping worker " + workers[worker.id].vmname);
 					stopWorker(workers[worker.id].vmname);
 				} else {
 					if(queue.length == 0) {

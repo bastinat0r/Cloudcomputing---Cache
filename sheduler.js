@@ -102,7 +102,7 @@ var srv = http.createServer(function(req, res) {
 			util.puts("avg     :\t" + load);
 
 			if(autoscale_method == 'load') {
-				if(load > 60 && azure_vm_names.length > 0) {
+				if(load > 50 && azure_vm_names.length > 0) {
 					stopNextWorker = false;
 					startWorker(azure_vm_names.pop());
 				}

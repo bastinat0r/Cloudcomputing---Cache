@@ -185,5 +185,6 @@ function startWorker(vmname) {
 function stopWorker(vmname) {
 	var stopNextWorker = false;
 	azure_vm_names.push(vmname);
+	util.puts("stopping worker");
 	var child = exec("azure vm shutdown " + vmname, execCB);
 }

@@ -75,6 +75,7 @@ var srv = http.createServer(function(req, res) {
 		if(/^\/register/.test(req.url)) {
 			worker = JSON.parse(data);
 			workers.push(worker);
+			util.puts("worker registered: workers.length - 1");
 			res.writeHead(200);
 			res.end(JSON.stringify(workers.length - 1));
 		}
@@ -98,7 +99,7 @@ var srv = http.createServer(function(req, res) {
 				load = sum / num;
 			}
 			util.puts("load " + worker.id + " :\t" + worker.load);
-			util.puts("avg  :\t" + load);
+			util.puts("avg     :\t" + load);
 
 			if(autoscale_method == 'load') {
 				if(load > 60 && azure_vm_names.length > 0) {
